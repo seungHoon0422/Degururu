@@ -86,7 +86,7 @@ const MembersPage: React.FC = () => {
                   <td className="px-8 py-6 text-[#A3A3A3] font-medium">{user.email}</td>
                   <td className="px-8 py-6">
                     <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border ${
-                      user.role === 'admin' 
+                      user.role === 'ADMIN' 
                         ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' 
                         : 'bg-[#171717] text-[#A3A3A3] border-[#262626]'
                     }`}>

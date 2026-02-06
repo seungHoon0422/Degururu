@@ -7,7 +7,7 @@ const ProfilePage: React.FC = () => {
   const queryClient = useQueryClient();
   const { data: user } = useQuery({ queryKey: ['me'], queryFn: usersApi.getMe });
   
-  const [nickname, setNickname] = useState(user?.nickname || '');
+  const [name, setName] = useState(user?.name || '');
   const [description, setDescription] = useState(user?.description || '');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -34,7 +34,7 @@ const ProfilePage: React.FC = () => {
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfileMutation.mutate({ nickname, description });
+    updateProfileMutation.mutate({ name, description });
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -67,12 +67,12 @@ const ProfilePage: React.FC = () => {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Nickname</label>
+              <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">Name</label>
               <input 
                 type="text" 
-                value={nickname} 
-                onChange={(e) => setNickname(e.target.value)}
-                placeholder={user?.nickname}
+                value={name} 
+                onChange={(e) => setName(e.target.value)}
+                placeholder={user?.name}
                 className="w-full bg-zinc-900 border border-zinc-800 text-white px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
               />
             </div>
