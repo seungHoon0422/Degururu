@@ -16,7 +16,11 @@ apiClient.interceptors.request.use((config) => {
 });
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // If the backend returns a non-array for what should be an array (common in some error scenarios),
+    // we ensure the frontend doesn't crash on .map() calls.
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
