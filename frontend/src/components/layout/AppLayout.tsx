@@ -2,10 +2,27 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import NavBar from './NavBar';
 import SideMenu from './SideMenu';
+import { Toaster } from 'sonner';
 
 const AppLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#0A0A0A] font-sans selection:bg-[#EDEDED] selection:text-[#0A0A0A]">
+      <Toaster 
+        theme="dark" 
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#171717',
+            border: '1px solid #262626',
+            color: '#EDEDED',
+            borderRadius: '0px',
+            fontSize: '12px',
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+          },
+          className: 'linear-strike-toast',
+        }}
+      />
       <NavBar />
       <SideMenu />
       

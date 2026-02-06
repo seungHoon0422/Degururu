@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersApi } from '../api/users';
+import { toast } from 'sonner';
 
 const ProfilePage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -10,15 +11,14 @@ const ProfilePage: React.FC = () => {
   const [description, setDescription] = useState(user?.description || '');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
 
   const updateProfileMutation = useMutation({
     mutationFn: usersApi.updateProfile,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['me'] });
-      setMessage({ text: 'Profile updated successfully!', type: 'success' });
+      toast.success('PROFILE UPDATED');
     },
-    onError: () => setMessage({ text: 'Failed to update profile.', type: 'error' })
+    onError: () => toast.error('UPDATE FAILED')
   });
 
   const changePasswordMutation = useMutation({
@@ -27,12 +27,9 @@ const ProfilePage: React.FC = () => {
     onSuccess: () => {
       setOldPassword('');
       setNewPassword('');
-      setMessage({ text: 'Password changed successfully!', type: 'success' });
+      toast.success('PASSWORD CHANGED');
     },
-    onError: (err: any) => setMessage({ 
-      text: err.response?.data?.detail || 'Failed to change password.', 
-      type: 'error' 
-    })
+    onError: (err: any) => toast.error(err.response?.data?.detail || 'CHANGE FAILED')
   });
 
   const handleProfileSubmit = (e: React.FormEvent) => {
@@ -51,14 +48,6 @@ const ProfilePage: React.FC = () => {
         <h1 className="text-4xl font-black tracking-tight text-white mb-2">MY PROFILE</h1>
         <p className="text-zinc-500 font-medium">Manage your identity and security.</p>
       </header>
-
-      {message && (
-        <div className={`p-4 rounded-xl font-bold text-sm ${
-          message.type === 'success' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'
-        }`}>
-          {message.text}
-        </div>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Profile Info Form */}

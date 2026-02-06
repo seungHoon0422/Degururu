@@ -6,14 +6,26 @@ import { usersApi } from '../api/users';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Calendar, TrendingUp, Trophy, Megaphone, ArrowRight, User } from 'lucide-react';
+import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
 const DashboardPage: React.FC = () => {
   const { data: user } = useQuery({ queryKey: ['me'], queryFn: usersApi.getMe });
   const { data: schedules } = useQuery({ queryKey: ['schedules'], queryFn: schedulesApi.getSchedules });
   const { data: announcements } = useQuery({ queryKey: ['announcements'], queryFn: announcementsApi.getAnnouncements });
+  const { data: scoreTrend } = useQuery({ queryKey: ['score-trend'], queryFn: usersApi.getScoreTrend });
 
   const nextSchedule = schedules?.[0];
   const latestNotice = announcements?.[0];
+
+  // Transform trend data for display
+  const trendData = scoreTrend?.map(item => ({
+    date: item.starts_at ? format(new Date(item.starts_at), 'MMM d') : 'N/A',
+    avg: Math.round(item.average),
+  })).reverse().slice(-7) || [];
+
+  const avgScore = trendData.length > 0 
+    ? Math.round(trendData.reduce((acc, curr) => acc + curr.avg, 0) / trendData.length)
+    : 0;
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 ease-out font-sans selection:bg-white selection:text-black">
@@ -114,13 +126,30 @@ const DashboardPage: React.FC = () => {
               <div className="p-3 bg-[#262626] w-fit rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-500">
                 <Trophy size={20} className="text-blue-500" />
               </div>
-              <h3 className="text-[#A3A3A3] text-xs font-bold uppercase tracking-[0.2em]">Avg Score</h3>
+              <h3 className="text-[#A3A3A3] text-xs font-bold uppercase tracking-[0.2em]">Performance</h3>
+            </div>
+            <div className="flex-1 min-h-[80px] -mx-4">
+              {trendData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={trendData}>
+                    <defs>
+                      <linearGradient id="colorAvg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <Area type="monotone" dataKey="avg" stroke="#3b82f6" fillOpacity={1} fill="url(#colorAvg)" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex items-center justify-center text-[#404040] text-[10px] font-bold">NO TREND DATA</div>
+              )}
             </div>
             <div>
               <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-5xl font-black text-[#EDEDED] font-mono tracking-tighter">184</span>
+                <span className="text-4xl font-black text-[#EDEDED] font-mono tracking-tighter">{avgScore}</span>
+                <span className="text-[#A3A3A3] text-[10px] font-bold uppercase">Avg</span>
               </div>
-              <p className="text-[#A3A3A3] text-xs font-medium">Last 10 sessions</p>
             </div>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />

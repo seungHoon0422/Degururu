@@ -24,6 +24,17 @@ async def list_schedule_attendance(
     return await attendance_service.list_schedule_attendance(db, schedule_id=schedule_id)
 
 
+@router.put("/schedules/{schedule_id}/attendance/me", response_model=AttendanceRead)
+async def my_checkin(
+    *,
+    db: AsyncSession = Depends(get_db_session),
+    current_user: User = Depends(get_current_active_user),
+    schedule_id: UUID,
+    payload: AttendanceUpsert,
+) -> Attendance:
+    return await attendance_service.upsert_attendance_for_user(db, schedule_id=schedule_id, user_id=current_user.id, payload=payload)
+
+
 @router.put("/schedules/{schedule_id}/attendance/{user_id}", response_model=AttendanceRead)
 async def admin_set_attendance(
     *,
@@ -34,26 +45,3 @@ async def admin_set_attendance(
     payload: AttendanceUpsert,
 ) -> Attendance:
     return await attendance_service.upsert_attendance_for_user(db, schedule_id=schedule_id, user_id=user_id, payload=payload)
-
-
-@router.get("/attendance/me", response_model=list[AttendanceRead])
-async def my_attendance(
-    *,
-    db: AsyncSession = Depends(get_db_session),
-    current_user: User = Depends(get_current_active_user),
-    page: int = Query(1, ge=1),
-    size: int = Query(20, ge=1, le=100),
-) -> list[Attendance]:
-    items, _total = await attendance_service.get_my_attendance(db, user_id=current_user.id, page=page, size=size)
-    return items
-
-
-@router.put("/schedules/{schedule_id}/attendance/me", response_model=AttendanceRead)
-async def my_checkin(
-    *,
-    db: AsyncSession = Depends(get_db_session),
-    current_user: User = Depends(get_current_active_user),
-    schedule_id: UUID,
-    payload: AttendanceUpsert,
-) -> Attendance:
-    return await attendance_service.upsert_attendance_for_user(db, schedule_id=schedule_id, user_id=current_user.id, payload=payload)

@@ -39,7 +39,11 @@ export const schedulesApi = {
     return response.data;
   },
   submitScores: async (scheduleId: string, score: number, game_no: number): Promise<any> => {
-    const response = await apiClient.post(`/schedules/${scheduleId}/scores`, { score, game_no });
+    const response = await apiClient.post(`/schedules/${scheduleId}/scores`, { 
+      schedule_id: scheduleId,
+      score, 
+      game_no 
+    });
     return response.data;
   },
   createSchedule: async (data: any): Promise<Schedule> => {
@@ -52,6 +56,10 @@ export const schedulesApi = {
   },
   deleteSchedule: async (id: string): Promise<void> => {
     await apiClient.delete(`/schedules/${id}`);
+  },
+  getScheduleStats: async (id: string): Promise<any> => {
+    const response = await apiClient.get(`/schedules/${id}/stats`);
+    return response.data;
   },
   updateAttendanceByAdmin: async (scheduleId: string, userId: string, status: string): Promise<Attendance> => {
     const response = await apiClient.put(`/schedules/${scheduleId}/attendance/${userId}`, { status });

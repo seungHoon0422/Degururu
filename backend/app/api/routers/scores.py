@@ -68,6 +68,16 @@ async def my_trend(
     return await score_service.get_my_trend(db, user_id=current_user.id, limit=limit)
 
 
+@router.get("/scores/me/high")
+async def my_high_score(
+    *,
+    db: AsyncSession = Depends(get_db_session),
+    current_user: User = Depends(get_current_active_user),
+) -> dict[str, int | None]:
+    high_score = await score_service.get_all_time_high(db, user_id=current_user.id)
+    return {"high_score": high_score}
+
+
 @router.get("/schedules/{schedule_id}/stats")
 async def schedule_stats(
     *,

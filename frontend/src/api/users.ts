@@ -3,13 +3,16 @@ import { apiClient } from './client';
 export interface UserProfile {
   id: string;
   email: string;
-  nickname: string;
+  name: string;
+  member_type?: 'FULL' | 'ASSOCIATE';
   description?: string;
-  role: 'admin' | 'member';
+  role: 'ADMIN' | 'MEMBER';
 }
 
 export interface ScoreTrend {
-  date: string;
+  schedule_id: string;
+  starts_at: string;
+  title: string;
   average: number;
   highest: number;
 }
@@ -28,6 +31,10 @@ export const usersApi = {
   },
   getScoreTrend: async (): Promise<ScoreTrend[]> => {
     const response = await apiClient.get('/scores/me/trend');
+    return response.data;
+  },
+  getMeHighScore: async (): Promise<{ high_score: number | null }> => {
+    const response = await apiClient.get('/scores/me/high');
     return response.data;
   },
   getAllAttendance: async (): Promise<any[]> => {

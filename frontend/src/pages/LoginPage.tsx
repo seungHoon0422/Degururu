@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { useAuth } from '../app/auth/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     try {
       const response = await (await import('../api/client')).apiClient.post('/auth/login', { email, password });
       await login(response.data.access_token);
+      toast.success('WELCOME BACK');
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Invalid email or password');
+      toast.error(err.response?.data?.detail || 'ACCESS DENIED');
     }
   };
 
@@ -63,12 +63,6 @@ const LoginPage: React.FC = () => {
               required
             />
           </div>
-
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl text-sm font-medium animate-pulse">
-              {error}
-            </div>
-          )}
 
           <button
             type="submit"

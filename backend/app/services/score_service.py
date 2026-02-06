@@ -26,14 +26,30 @@ class ScoreService:
 
         await self._ensure_schedule_exists(db, schedule_id=schedule_id)
 
-        score = Score(schedule_id=schedule_id, user_id=user_id, game_no=payload.game_no, score=payload.score)
-        db.add(score)
+        # Check if a score already exists with the same user_id, schedule_id, and game_no
+        result = await db.execute(
+            select(Score).where(
+                Score.schedule_id == schedule_id,
+                Score.user_id == user_id,
+                Score.game_no == payload.game_no
+            )
+        )
+        existing_score = result.scalar_one_or_none()
+
+        if existing_score:
+            # Update existing score
+            existing_score.score = payload.score
+            score = existing_score
+        else:
+            # Create new score
+            score = Score(schedule_id=schedule_id, user_id=user_id, game_no=payload.game_no, score=payload.score)
+            db.add(score)
 
         try:
             await db.commit()
         except IntegrityError:
             await db.rollback()
-            raise HTTPException(status_code=409, detail="Score already exists for this game")
+            raise HTTPException(status_code=409, detail="Score conflict")
 
         await db.refresh(score)
         return score
@@ -89,9 +105,22 @@ class ScoreService:
             "count": int(count or 0),
         }
 
+    async def get_all_time_high(self, db: AsyncSession, *, user_id: UUID) -> int:
+        result = await db.execute(
+            select(func.max(Score.score)).where(Score.user_id == user_id)
+        )
+        val = result.scalar()
+        return int(val) if val is not None else 0
+
     async def get_my_trend(self, db: AsyncSession, *, user_id: UUID, limit: int = 50) -> list[dict[str, object]]:
         stmt = (
-            select(Score.schedule_id, func.avg(Score.score), func.min(Schedule.starts_at))
+            select(
+                Score.schedule_id, 
+                func.avg(Score.score).label("average"), 
+                func.max(Score.score).label("highest"),
+                func.min(Schedule.starts_at).label("starts_at"),
+                func.min(Schedule.title).label("title")
+            )
             .join(Schedule, Schedule.id == Score.schedule_id)
             .where(Score.user_id == user_id)
             .group_by(Score.schedule_id)
@@ -101,12 +130,14 @@ class ScoreService:
         result = await db.execute(stmt)
 
         items: list[dict[str, object]] = []
-        for schedule_id, avg_score, starts_at in result.all():
+        for row in result.all():
             items.append(
                 {
-                    "schedule_id": schedule_id,
-                    "starts_at": starts_at,
-                    "average": float(avg_score) if avg_score is not None else None,
+                    "schedule_id": row.schedule_id,
+                    "starts_at": row.starts_at,
+                    "title": row.title,
+                    "average": float(row.average) if row.average is not None else None,
+                    "highest": int(row.highest) if row.highest is not None else None,
                 }
             )
         return items

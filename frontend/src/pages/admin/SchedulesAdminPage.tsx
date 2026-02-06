@@ -4,6 +4,7 @@ import { schedulesApi, Schedule } from '../../api/schedules';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 const SchedulesAdminPage: React.FC = () => {
   const queryClient = useQueryClient();
@@ -23,7 +24,9 @@ const SchedulesAdminPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
       setIsModalOpen(false);
       reset();
-    }
+      toast.success('SESSION CREATED');
+    },
+    onError: () => toast.error('CREATE FAILED')
   });
 
   const updateMutation = useMutation({
@@ -33,14 +36,18 @@ const SchedulesAdminPage: React.FC = () => {
       setIsModalOpen(false);
       setEditingSchedule(null);
       reset();
-    }
+      toast.success('SESSION UPDATED');
+    },
+    onError: () => toast.error('UPDATE FAILED')
   });
 
   const deleteMutation = useMutation({
     mutationFn: schedulesApi.deleteSchedule,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'schedules'] });
-    }
+      toast.success('SESSION DELETED');
+    },
+    onError: () => toast.error('DELETE FAILED')
   });
 
   const onSubmit = (data: Omit<Schedule, 'id'>) => {

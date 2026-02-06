@@ -27,7 +27,7 @@ const AnnouncementDetailPage: React.FC = () => {
           <div className="flex items-center gap-4">
              <span className="bg-blue-600 h-1 w-12 rounded-full" />
              <time className="text-zinc-500 font-black text-xs uppercase tracking-widest">
-               {format(new Date(notice.createdAt), 'MMMM d, yyyy')}
+               {notice.created_at ? format(new Date(notice.created_at), 'MMMM d, yyyy') : 'N/A'}
              </time>
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-white leading-tight tracking-tighter">
