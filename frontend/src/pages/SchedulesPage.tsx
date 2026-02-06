@@ -10,9 +10,10 @@ const SchedulesPage: React.FC = () => {
     queryFn: schedulesApi.getSchedules 
   });
 
-  const sortedSchedules = schedules?.sort((a, b) => 
-    new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime()
-  );
+  // Ensure schedules is an array before sorting
+  const sortedSchedules = Array.isArray(schedules) 
+    ? [...schedules].sort((a, b) => new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime())
+    : [];
 
   const getStatusInfo = (schedule: any) => {
     if (schedule.is_cancelled) return { label: 'CANCELLED', color: 'bg-red-500/20 text-red-400 border-red-500/40' };
