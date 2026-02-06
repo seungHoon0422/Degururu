@@ -15,7 +15,14 @@ RUN pip install fastapi uvicorn sqlalchemy[asyncio] asyncpg pydantic-settings al
 COPY . .
 
 # Migration and server start script
-RUN echo '#!/bin/bash\nalembic upgrade head\npython seed.py\nuvicorn app.main:app --host 0.0.0.0 --port 8000' > /app/start.sh
+RUN echo '#!/bin/bash\n\
+until curl -s http://postgres:5432 > /dev/null; do\n\
+  echo "Waiting for postgres..."\n\
+  sleep 2\n\
+done\n\
+alembic upgrade head\n\
+python seed.py\n\
+uvicorn app.main:app --host 0.0.0.0 --port 8000' > /app/start.sh
 RUN chmod +x /app/start.sh
 
 CMD ["/app/start.sh"]

@@ -19,9 +19,43 @@ services:
       - "8000:8000"
     environment:
       DATABASE_DSN: postgresql+asyncpg://degururu:degururu2026@postgres:5432/degururu
+      CORS_ALLOW_ORIGINS: '["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173"]'
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
+
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+        - VITE_API_URL=http://localhost:8000/api
+    container_name: degururu-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: degururu-postgres
+    environment:
+      POSTGRES_USER: degururu
+      POSTGRES_PASSWORD: degururu2026
+      POSTGRES_DB: degururu
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U degururu"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
 
   frontend:
     build: 
