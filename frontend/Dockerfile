@@ -12,9 +12,12 @@ FROM node:20-slim
 
 WORKDIR /app
 
+# Install vite globally to ensure 'vite preview' works, or use npx
+RUN npm install -g vite
+
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
 RUN npm install --omit=dev
 
-# We use vite preview for simple deployment demonstration
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
+# Use npx to ensure the local or global vite binary is found
+CMD ["npx", "vite", "preview", "--host", "0.0.0.0", "--port", "3000"]
