@@ -24,7 +24,15 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = Field(default=60, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
 
     # CORS
-    cors_allow_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173"], alias="CORS_ALLOW_ORIGINS")
+    cors_allow_origins: list[str] = Field(
+        default_factory=lambda: [
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:5173",
+        ], 
+        alias="CORS_ALLOW_ORIGINS"
+    )
 
 
 @lru_cache
