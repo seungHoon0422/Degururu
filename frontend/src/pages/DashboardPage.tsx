@@ -17,11 +17,13 @@ const DashboardPage: React.FC = () => {
   const nextSchedule = schedules?.[0];
   const latestNotice = announcements?.[0];
 
-  // Transform trend data for display
-  const trendData = scoreTrend?.map(item => ({
-    date: item.starts_at ? format(new Date(item.starts_at), 'MMM d') : 'N/A',
-    avg: Math.round(item.average),
-  })).reverse().slice(-7) || [];
+  // Transform trend data for display with strict array guard
+  const trendData = Array.isArray(scoreTrend) 
+    ? scoreTrend.map(item => ({
+        date: item.starts_at ? format(new Date(item.starts_at), 'MMM d') : 'N/A',
+        avg: Math.round(item.average),
+      })).reverse().slice(-7)
+    : [];
 
   const avgScore = trendData.length > 0 
     ? Math.round(trendData.reduce((acc, curr) => acc + curr.avg, 0) / trendData.length)

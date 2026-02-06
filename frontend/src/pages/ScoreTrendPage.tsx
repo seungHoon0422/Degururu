@@ -11,7 +11,7 @@ const ScoreTrendPage: React.FC = () => {
 
   if (isLoading) return <div className="text-zinc-500 animate-pulse font-black text-2xl">ANALYZING PERFORMANCE...</div>;
 
-  const trendData = trend ? [...trend].reverse() : [];
+  const trendData = Array.isArray(trend) ? [...trend].reverse() : [];
   const currentAvg = trendData.length ? Math.round(trendData.reduce((acc, curr) => acc + curr.average, 0) / trendData.length) : 0;
   const bestAvg = trendData.length ? Math.max(...trendData.map(t => t.average)) : 0;
   const highestScore = trendData.length ? Math.max(...trendData.map(t => t.highest)) : 0;
