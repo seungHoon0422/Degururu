@@ -1,0 +1,74 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "provider": {
+        "AI:ON-U (local)": {
+            "api": "http://localhost:5001/v1",
+            "models": {
+                "Claude 4.5 Sonnet": {
+                    "name": "Claude 4.5 Sonnet",
+                    "options": {
+                        "apiKey": "code-aionu",
+                        "reasoningEffort": "high"
+                    }
+                },
+                "Gemini 3 Flash Preview": {
+                    "name": "Gemini 3 Flash Preview",
+                    "options": {
+                        "apiKey": "code-aionu",
+                        "reasoningEffort": "high"
+                    }
+                },
+                "GPT-5.2": {
+                    "name": "GPT-5.2",
+                    "options": {
+                        "apiKey": "code-aionu",
+                        "reasoningEffort": "high",
+                        "textVerbosity": "low",
+                        "include": ["reasoning.encrypted_content"]
+                    }
+                }
+            }
+        },
+        "AI:ON-U (dev)": {
+            "api": "https://api.aionu.ktds.co.kr/v1",
+            "models": {
+                "Claude 4.6 Opus": {
+                    "name": "Claude 4.6 Opus",
+                    "options": {
+                        "apiKey": "code-PTGtADJA9FdAyCSmZFBckmvQ"
+                    }
+                },
+                "Claude 4.5 Opus": {
+                    "name": "Claude 4.5 Opus",
+                    "options": {
+                        "apiKey": "code-PTGtADJA9FdAyCSmZFBckmvQ"
+                    }
+                },
+                "Claude 4.5 Sonnet": {
+                    "name": "Claude 4.5 Sonnet",
+                    "options": {
+                        "apiKey": "code-PTGtADJA9FdAyCSmZFBckmvQ"
+                    }
+                },
+                "Gemini 3 Flash Preview": {
+                    "name": "Gemini 3 Flash Preview",
+                    "options": {
+                        "apiKey": "code-PTGtADJA9FdAyCSmZFBckmvQ"
+                    }
+                },
+                "Gemini 2.5 Flash": {
+                    "name": "Gemini 2.5 Flash",
+                    "options": {
+                        "apiKey": "code-PTGtADJA9FdAyCSmZFBckmvQ"
+                    }
+                },
+                "GPT-5.2": {
+                    "name": "GPT-5.2",
+                    "options": {
+                        "apiKey": "code-PTGtADJA9FdAyCSmZFBckmvQ"
+                    }
+                }
+            }
+        }
+  }
+}

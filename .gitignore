@@ -1,0 +1,47 @@
+# Dependency directories
+node_modules/
+.venv/
+env/
+venv/
+ENV/
+.env
+
+# Python build/cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Vite/Frontend build
+dist/
+.vite/
+.eslintcache
+
+# Logs
+*.log
